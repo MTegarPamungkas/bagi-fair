@@ -470,6 +470,10 @@ class AppLocalizations {
   String get takePhoto => t('Kamera', 'Camera');
   String get choosePhoto => t('Pilih foto', 'Choose photo');
   String get scanningReceipt => t('Membaca struk…', 'Reading receipt…');
+  String get scanningReceiptBody => t(
+    'AI sedang membaca item, pajak, dan total. Biasanya 3-10 detik, jangan tutup halaman ini.',
+    'The AI is reading items, tax, and totals. Usually 3-10 seconds, keep this page open.',
+  );
   String get scanFailed => t('Scan belum berhasil', 'Scan did not work');
   String get scanFailedBody => t(
     'Foto kurang jelas atau layanan AI sedang sibuk. Kamu tetap bisa input manual.',

@@ -2,7 +2,7 @@
 //
 // Requires these function secrets (never shipped to the app):
 //   GEMINI_API_KEY   free-tier key from https://aistudio.google.com/apikey
-//   GEMINI_MODEL     optional, defaults to gemini-2.0-flash
+//   GEMINI_MODEL     optional, defaults to gemini-3.5-flash
 //
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by Supabase.
 // Every request is authenticated, membership-checked, rate-limited per user
@@ -114,7 +114,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const geminiKey = Deno.env.get("GEMINI_API_KEY");
-  const model = Deno.env.get("GEMINI_MODEL") ?? "gemini-2.0-flash";
+  const model = Deno.env.get("GEMINI_MODEL") ?? "gemini-3.5-flash";
 
   if (!supabaseUrl || !serviceKey) {
     return json({ error: "server_not_configured" }, 500);

@@ -95,9 +95,13 @@ flutter run --dart-define-from-file=env.json
 ```bash
 flutter build web --release
 flutter build apk --release
+# Smaller APKs, one per architecture:
+flutter build apk --release --split-per-abi --dart-define-from-file=env.json
 ```
 
-For a signed release APK, configure `android/key.properties` and Gradle signing.
+Release APKs are signed from `android/key.properties` (`storeFile`, `storePassword`,
+`keyAlias`, `keyPassword`). That file is git-ignored; when it is missing the
+release build falls back to the debug keys so CI keeps working.
 
 ---
 
@@ -117,7 +121,7 @@ supabase db push --linked
 supabase functions deploy scan-receipt --project-ref tkjjpmwwvlvgydutnpls
 supabase secrets set GEMINI_API_KEY=<free-key> --project-ref tkjjpmwwvlvgydutnpls
 # optional
-supabase secrets set GEMINI_MODEL=gemini-2.0-flash --project-ref tkjjpmwwvlvgydutnpls
+supabase secrets set GEMINI_MODEL=gemini-3.5-flash --project-ref tkjjpmwwvlvgydutnpls
 ```
 
 Get a free Gemini key at <https://aistudio.google.com/apikey>. Without the secret, the function returns `ai_not_configured`; the app says so and routes the user to editable manual entry instead of failing silently.

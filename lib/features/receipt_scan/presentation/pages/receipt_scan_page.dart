@@ -7,6 +7,7 @@ import 'package:bagi_fair/core/utils/money_formatter.dart';
 import 'package:bagi_fair/core/widgets/fair_ui.dart';
 import 'package:bagi_fair/core/widgets/pickers.dart';
 import 'package:bagi_fair/features/receipt_scan/presentation/bloc/receipt_scan_bloc.dart';
+import 'package:bagi_fair/features/receipt_scan/presentation/widgets/scan_analyzing_stage.dart';
 import 'package:bagi_fair/features/receipt_scan/presentation/widgets/scan_review_stage.dart';
 import 'package:bagi_fair/features/receipt_scan/presentation/widgets/scan_save_bar.dart';
 import 'package:bagi_fair/features/receipt_scan/presentation/widgets/scan_stepper.dart';
@@ -59,6 +60,7 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
 
   Future<void> _pick(ImageSource source) async {
     if (_picking) return;
+    if (context.read<ReceiptScanBloc>().state.scanning) return;
     setState(() => _picking = true);
     try {
       final file = await _picker.pickImage(
@@ -151,7 +153,7 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
         if (state.loading) {
           return Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: _appBar(context),
+            appBar: _appBar(context, scanning: state.scanning),
             body: const FairBackground(child: LoadingState()),
           );
         }
@@ -159,7 +161,7 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
         _syncMoneyFields(state);
         return Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: _appBar(context),
+          appBar: _appBar(context, scanning: state.scanning),
           body: FairBackground(
             child: Column(
               children: [
@@ -180,7 +182,22 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
                             children: [
                               ScanStepper(manual: state.manual),
                               const SizedBox(height: AppSpacing.lg),
-                              if (!state.manual)
+                              if (state.manual)
+                                ScanReviewStage(
+                                  state: state,
+                                  merchant: _merchant,
+                                  tax: _tax,
+                                  service: _service,
+                                  onPickAgain: () =>
+                                      _pick(ImageSource.gallery),
+                                  onEvent:
+                                      context.read<ReceiptScanBloc>().add,
+                                )
+                              else if (state.scanning)
+                                ScanAnalyzingStage(
+                                  imageBytes: state.imageBytes,
+                                )
+                              else
                                 ScanUploadStage(
                                   groupName: state.group?.name ?? '',
                                   picking: _picking,
@@ -192,17 +209,6 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
                                   onManual: () => context
                                       .read<ReceiptScanBloc>()
                                       .add(const ReceiptScanManualRequested()),
-                                )
-                              else
-                                ScanReviewStage(
-                                  state: state,
-                                  merchant: _merchant,
-                                  tax: _tax,
-                                  service: _service,
-                                  onPickAgain: () =>
-                                      _pick(ImageSource.gallery),
-                                  onEvent:
-                                      context.read<ReceiptScanBloc>().add,
                                 ),
                             ],
                           ),
@@ -226,10 +232,23 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
     );
   }
 
-  PreferredSizeWidget _appBar(BuildContext context) {
+  PreferredSizeWidget _appBar(
+    BuildContext context, {
+    required bool scanning,
+  }) {
     final l10n = context.l10n;
     return AppBar(
       backgroundColor: Colors.transparent,
+      bottom: scanning
+          ? PreferredSize(
+              preferredSize: const Size.fromHeight(2),
+              child: LinearProgressIndicator(
+                minHeight: 2,
+                backgroundColor: Colors.transparent,
+                color: context.fair.accent,
+              ),
+            )
+          : null,
       leading: IconButton(
         tooltip: l10n.back,
         onPressed: () => context.canPop()
@@ -258,6 +277,7 @@ class _ReceiptScanViewState extends State<_ReceiptScanView> {
     return switch (code) {
       'rate_limited' => l10n.rateLimited,
       'cloud_unavailable' => l10n.aiNeedsCloud,
+      'ai_not_configured' => l10n.aiNotConfigured,
       'receipt_incomplete' => l10n.receiptNotFound,
       'items_required' => l10n.itemsRequired,
       'save_failed' => l10n.saveFailed,
