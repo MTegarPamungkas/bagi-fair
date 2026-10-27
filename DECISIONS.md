@@ -443,6 +443,18 @@ Both were reproduced against the live project: the same notification body return
 
 ---
 
+## ADR-035 — GitHub Pages is a branch deploy because Actions runners are blocked
+
+**Context.** The account's Actions jobs are refused before any step with “The job was not started because your account is locked due to a billing issue.” The workflows themselves are valid; both the CI job and the Pages build fail at runner allocation. Pages still works when it builds from a branch, which does not consume Actions minutes.
+
+**Decision.** Build the web bundle locally with `--base-href /bagi-fair/`, publish it to an orphan `gh-pages` branch with a `.nojekyll` file, and point Pages at that branch (`build_type: legacy`, source `gh-pages:/`). Keep `.github/workflows/pages.yml` and `ci.yml` in the repository, disabled, as the automation path once billing is resolved. Web invite links use GoRouter's hash route (`#/join/CODE`) so they work on a static host without a path-rewrite fallback.
+
+**Alternatives considered.** Netlify/Vercel deploy (adds a third-party dependency to a GitHub Pages request); committing `build/web` to `main` and serving `/docs` (pollutes the source tree and requires a second build layout); waiting for billing (blocks delivery).
+
+**Consequences.** The live site is current and deploys with plain `git push`. Automated CI is paused until the account is unbilled; the commands to re-enable it are in the README. Any web-only change needs a rebuild + `gh-pages` push.
+
+---
+
 ## Deliberate non-goals (for now)
 
 - Google sign-in (provider disabled; email/password only).

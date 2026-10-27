@@ -321,8 +321,29 @@ flutter test
 
 CI (`.github/workflows/ci.yml`) runs analyze, tests, a web build, and a debug APK
 build on every push and pull request. A second workflow
-(`.github/workflows/pages.yml`) builds the web app with the repository's base href
-and deploys it to GitHub Pages on every push to `main`.
+(`.github/workflows/pages.yml`) is the equivalent Pages pipeline.
+
+Both workflows are **disabled on this repository** because the account's Actions
+runners are currently blocked by a billing issue. The live demo is therefore
+deployed from the **`gh-pages` branch** (a branch deploy needs no Actions minutes).
+Once the account is healthy, re-enable them with:
+
+```bash
+gh workflow enable CI
+gh workflow enable "Deploy web to GitHub Pages"
+```
+
+and switch **Settings → Pages → Source** back to *GitHub Actions*.
+
+### Deploying the web build manually
+
+```bash
+flutter build web --release --base-href /bagi-fair/
+# publish the contents of build/web to the gh-pages branch, with a .nojekyll file
+```
+
+The repository is `MTegarPamungkas/bagi-fair`, so the base href and the Pages URL
+must match `/bagi-fair/`.
 
 ### Cloud / RLS smoke test
 
