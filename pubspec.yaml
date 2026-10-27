@@ -1,7 +1,7 @@
 name: bagi_fair
 description: "Bagi Fair - split bill kolaboratif. Bagi adil, tanpa baper."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.2+2
 
 environment:
   sdk: ^3.13.7
