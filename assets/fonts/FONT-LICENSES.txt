@@ -1,0 +1,9 @@
+Fonts bundled with Bagi Fair
+============================
+
+Outfit — SIL Open Font License 1.1 (https://fonts.google.com/specimen/Outfit)
+Bricolage Grotesque — SIL Open Font License 1.1 (https://fonts.google.com/specimen/Bricolage+Grotesque)
+JetBrains Mono — SIL Open Font License 1.1 (https://fonts.google.com/specimen/JetBrains+Mono)
+
+The full OFL 1.1 text is reproduced in OFL-PlusJakartaSans.txt, which applies
+to these families as well.
